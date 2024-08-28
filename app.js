@@ -6,6 +6,7 @@ const app = express()
 const jwt = require("jsonwebtoken")
 const loginModel = require('./models/admin')
 const missingModel = require('./models/missing')
+const addModel = require('./models/add')
 app.use(cors())
 app.use(express.json())
 
@@ -59,6 +60,27 @@ app.post('/addMissingPeople',async(req,res)=>{
         }
     })
     
+})
+
+app.post("/addpeople",(req,res)=>{
+    let input = req.body
+    let hashedPassword = bcrypt.hashSync(input.password,10)
+    input.password=hashedPassword
+    
+    const dateobject = new Date()
+    const currentyear = dateobject.getFullYear()
+    //console.log(currentyear.toString())
+    const currentmonth = dateobject.getMonth()+1
+    //console.log(currentmonth.toString())
+    const randomnumber = Math.floor(Math.random()*9999)+1000
+    //console.log(randomnumber.toString())
+    const people_id = "XYZ"+currentyear.toString()+currentmonth.toString()+randomnumber.toString()
+    console.log(people_id)
+    input.people_id=people_id
+    console.log(input)
+    let result = new addModel(input)
+    result.save()
+    res.json({"status":"success"})
 })
 
 app.listen(8080,()=>{
